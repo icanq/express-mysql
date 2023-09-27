@@ -1,5 +1,6 @@
 # Simple server dengan Express dan MySQL
 
+```
 project-root/
 │
 ├── config/
@@ -29,11 +30,10 @@ project-root/
 │   ├── helpers.js           # Helper functions and utilities (if needed)
 │   └── ...
 │
-├── app.js                   # Express application setup
-│
-├── server.js                # Server entry point
+├── app.js                   # Express application setup and entrypoint
 │
 └── .env                     # Environment variables configuration
+```
 
 # Requirements
 
