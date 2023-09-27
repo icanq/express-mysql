@@ -1,64 +1,74 @@
-const pool = require('../config/database');
+const { prisma } = require('../config/prisma');
 
 async function getUsers() {
-  const connection = await pool.getConnection();
   try {
-    const [rows] = await connection.query('SELECT * FROM users');
-    return rows;
-  } finally {
-    connection.release();
+    const user = await prisma.user.findMany();
+    return user;
+  } catch (error) {
+    console.log(error);
   }
 }
 
 
 async function createUser(user) {
-  const connection = await pool.getConnection();
   try {
-    const [rows] = await connection.query(
-      'INSERT INTO users (username, email, password) VALUES (?, ?, ?)',
-      [user.username, user.email, user.password]
-    );
-    return rows.insertId;
-  } finally {
-    connection.release();
+    const createdUser = await prisma.user.create({
+      data: {
+        email: user.email,
+        username: user.username,
+        password: user.password,
+      }
+    })
+    return createdUser;
+  } catch (error) {
+    throw new Error(error)
   }
 }
 
 // Function to get a user by ID
 async function getUserById(userId) {
-  const connection = await pool.getConnection();
   try {
-    const [rows] = await connection.query('SELECT * FROM users WHERE id = ?', [
-      userId,
-    ]);
-    return rows[0];
-  } finally {
-    connection.release();
+    const user = await prisma.user.findUnique({
+      where: {
+        id: Number(userId)
+      }
+    })
+    return user
+  } catch (error) {
+    throw new Error(error)
   }
 }
 
 // Function to update a user by ID
 async function updateUserById(userId, updatedUser) {
-  const connection = await pool.getConnection();
   try {
-    await connection.query(
-      'UPDATE users SET username = ?, email = ?, password = ? WHERE id = ?',
-      [updatedUser.username, updatedUser.email, updatedUser.password, userId]
-    );
-    return true;
-  } finally {
-    connection.release();
+    const userUpdate = await prisma.user.update({
+      where: {
+        id: Number(userId)
+      },
+      data: {
+        email: updatedUser.email,
+        username: updatedUser.username,
+        password: updatedUser.password,
+      }
+    })
+    return userUpdate;
+  } catch(error) {
+    throw new Error(error)
   }
 }
 
 // Function to delete a user by ID
 async function deleteUserById(userId) {
-  const connection = await pool.getConnection();
   try {
-    await connection.query('DELETE FROM users WHERE id = ?', [userId]);
-    return true;
-  } finally {
-    connection.release();
+    const deletedUser = await prisma.user.delete({
+      where: {
+        id: Number(userId)
+      }
+    })
+    return deletedUser;
+  } catch (error) {
+    console.log(error);
   }
 }
 
